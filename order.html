@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Code Order Menu - AIへのコード注文メニュー</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #1a1a1a;
+      --card: #252525;
+      --accent: #ff6b35;
+      --accent2: #4ecdc4;
+      --text: #f0f0f0;
+      --text-dim: #888;
+      --highlight: #ffe66d;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2rem;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
+      border-bottom: 3px solid var(--accent);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 900;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--accent), var(--highlight));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      color: var(--text-dim);
+      font-size: 1.1rem;
+    }
+
+    .section {
+      margin-bottom: 2.5rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-icon {
+      font-size: 1.5rem;
+    }
+
+    h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--accent2);
+    }
+
+    .menu-grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .menu-item {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 1.5rem;
+      border-left: 4px solid var(--accent);
+      transition: transform 0.2s;
+    }
+
+    .menu-item:hover {
+      transform: translateX(4px);
+    }
+
+    .menu-item.featured {
+      border-left-color: var(--highlight);
+      background: linear-gradient(135deg, var(--card), #2d2a1a);
+    }
+
+    .menu-item.featured .order-phrase {
+      color: var(--highlight);
+    }
+
+    .order-phrase {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1rem;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+      word-break: break-all;
+    }
+
+    .menu-item.featured .order-phrase {
+      font-size: 1.25rem;
+    }
+
+    .description {
+      color: var(--text-dim);
+      font-size: 0.95rem;
+    }
+
+    .tag {
+      display: inline-block;
+      background: rgba(255, 107, 53, 0.2);
+      color: var(--accent);
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      margin-right: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .tag.easy {
+      background: rgba(78, 205, 196, 0.2);
+      color: var(--accent2);
+    }
+
+    .tag.warning {
+      background: rgba(255, 230, 109, 0.2);
+      color: var(--highlight);
+    }
+
+    .section.secondary .menu-item {
+      padding: 1rem 1.5rem;
+      border-left-width: 3px;
+      opacity: 0.85;
+    }
+
+    .section.secondary .order-phrase {
+      font-size: 0.95rem;
+    }
+
+    .section.secondary .description {
+      font-size: 0.85rem;
+    }
+
+    .tips {
+      background: linear-gradient(135deg, #1e3a3a, #1a2a2a);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-top: 3rem;
+      border: 1px solid var(--accent2);
+    }
+
+    .tips h3 {
+      color: var(--accent2);
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+
+    .tips ul {
+      list-style: none;
+    }
+
+    .tips li {
+      padding: 0.5rem 0;
+      padding-left: 1.5rem;
+      position: relative;
+    }
+
+    .tips li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--accent2);
+    }
+
+    .copy-hint {
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(255,255,255,0.1);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid #333;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+
+    .service-note {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      margin-top: 0.5rem;
+      padding-left: 1rem;
+      border-left: 2px solid #444;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 1rem;
+      }
+      h1 {
+        font-size: 1.8rem;
+      }
+      .order-phrase {
+        font-size: 0.95rem;
+      }
+      .menu-item.featured .order-phrase {
+        font-size: 1.05rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🍔 AI Code Order Menu</h1>
+      <p class="subtitle">AIにコードを注文するときのフレーズ集</p>
+    </header>
+
+    <!-- INSTANT PLAY -->
+    <section class="section">
+      <div class="section-header">
+        <span class="section-icon">⚡</span>
+        <h2>すぐ遊べる（保存もインストールも不要）</h2>
+      </div>
+      <div class="menu-grid">
+        <div class="menu-item featured">
+          <div class="order-phrase">Claude → そのまま頼むだけ</div>
+          <div class="description">Claudeは自動でプレビュー付きで出してくれる。特に何も言わなくてOK。</div>
+          <span class="tag easy">🔰 一番カンタン</span>
+        </div>
+        <div class="menu-item featured">
+          <div class="order-phrase">Gemini・ChatGPT →Canvas</div>
+          <div class="description">チャット欄の近くにあるCanvasボタンを自分で押す。そうするとプレビューが出る。</div>
+          <span class="tag easy">🔰 ボタン押す</span>
+        </div>
+        <div class="menu-item">
+          <div class="order-phrase">「HTML1ファイルで」</div>
+          <div class="description">ダウンロードしてブラウザで開くだけで動く。人に渡すときに便利。</div>
+          <span class="tag">共有向け</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- DEVICE SPECIFICATION -->
+    <section class="section">
+      <div class="section-header">
+        <span class="section-icon">📱</span>
+        <h2>デバイス指定（これ忘れると詰む）</h2>
+      </div>
+      <div class="menu-grid">
+        <div class="menu-item featured">
+          <div class="order-phrase">「スマホ対応で」</div>
+          <div class="description">スマホでもPCでも使えるようになる。<br>言わないとPC用が出てきてスマホで窮屈。</div>
+          <span class="tag warning">⚠️ 毎回言う</span>
+        </div>
+        <div class="menu-item">
+          <div class="order-phrase">「縦画面で」「横画面で」</div>
+          <div class="description">ゲームで画面の向きを固定したいとき。</div>
+          <span class="tag">ゲーム向け</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- DESIGN -->
+    <section class="section">
+      <div class="section-header">
+        <span class="section-icon">🎨</span>
+        <h2>見た目の指定</h2>
+      </div>
+      <div class="menu-grid">
+        <div class="menu-item">
+          <div class="order-phrase">「マテリアルデザインで」</div>
+          <div class="description">Googleっぽいシンプルな見た目。カードと影。迷ったらこれ。</div>
+          <span class="tag">シンプル系</span>
+        </div>
+        <div class="menu-item">
+          <div class="order-phrase">「リッチなデザインで」「スキューモーフィックで」</div>
+          <div class="description">立体的でリアルな見た目。ボタンがボタンっぽい。装飾多め。</div>
+          <span class="tag">豪華系</span>
+        </div>
+        <div class="menu-item">
+          <div class="order-phrase">「ダークモードで」</div>
+          <div class="description">背景が暗い。目に優しい。夜向け。</div>
+          <span class="tag">夜向け</span>
+        </div>
+        <div class="menu-item">
+          <div class="order-phrase">「〇〇っぽい見た目で」</div>
+          <div class="description">「LINEっぽく」「Instagramみたいに」など、知ってるアプリで伝える。</div>
+          <span class="tag easy">伝わりやすい</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- GAME SPECIFIC -->
+    <section class="section">
+      <div class="section-header">
+        <span class="section-icon">🎮</span>
+        <h2>ゲーム向け</h2>
+      </div>
+      <div class="menu-grid">
+        <div class="menu-item">
+          <div class="order-phrase">「〇〇みたいなゲーム」</div>
+          <div class="description">「マリオみたいな横スクロール」「テトリスみたいな落ちゲー」など例えで頼む。</div>
+          <span class="tag easy">🔰 これが一番伝わる</span>
+        </div>
+        <div class="menu-item">
+          <div class="order-phrase">「HTML5 Canvasで」</div>
+          <div class="description">図形を動かすゲーム向け。シューティングとかアクションとか。</div>
+          <span class="tag">アクション系</span>
+        </div>
+        <div class="menu-item">
+          <div class="order-phrase">「ボタンとテキストだけで」</div>
+          <div class="description">すごろく、クイズ、ノベルゲームなど。派手な描画がいらないゲーム。</div>
+          <span class="tag">シンプル系</span>
+        </div>
+        <div class="menu-item">
+          <div class="order-phrase">「セーブ機能つけて」</div>
+          <div class="description">次に開いたとき続きからできる。RPGとか育成ゲーに。</div>
+          <span class="tag">長く遊ぶ系</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTERMEDIATE -->
+    <section class="section secondary">
+      <div class="section-header">
+        <span class="section-icon">🔧</span>
+        <h2>中級（用語を知ってると便利）</h2>
+      </div>
+      <div class="menu-grid">
+        <div class="menu-item">
+          <div class="order-phrase">「Tailwind CSSで」</div>
+          <div class="description">今どきのWebサイトっぽい見た目になる。</div>
+        </div>
+        <div class="menu-item">
+          <div class="order-phrase">「Phaserで」</div>
+          <div class="description">本格的な2Dゲームエンジン。物理演算やアニメーションが得意。</div>
+        </div>
+        <div class="menu-item">
+          <div class="order-phrase">「PWAで」</div>
+          <div class="description">ホーム画面に追加できる。アプリっぽく使える。</div>
+        </div>
+        <div class="menu-item">
+          <div class="order-phrase">「Three.jsで」</div>
+          <div class="description">ブラウザで3D。重いけどかっこいい。</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADVANCED -->
+    <section class="section secondary">
+      <div class="section-header">
+        <span class="section-icon">🚀</span>
+        <h2>上級（開発環境の構築が必要）</h2>
+      </div>
+      <div class="menu-grid">
+        <div class="menu-item">
+          <div class="order-phrase">「TypeScriptで」</div>
+          <div class="description">型があるJavaScript。大きいプロジェクト向け。</div>
+          <span class="tag warning">要ビルド環境</span>
+        </div>
+        <div class="menu-item">
+          <div class="order-phrase">「Reactで」「Vueで」</div>
+          <div class="description">本格的なWebアプリ向け。Node.jsのセットアップが必要。</div>
+          <span class="tag warning">要Node.js</span>
+        </div>
+        <div class="menu-item">
+          <div class="order-phrase">「Pythonで」</div>
+          <div class="description">Python環境が必要。「インストール方法も教えて」と一緒に聞く。</div>
+          <span class="tag warning">要Python</span>
+        </div>
+        <div class="menu-item">
+          <div class="order-phrase">「Unityで」「Godotで」</div>
+          <div class="description">本格ゲームエンジン。専用アプリのインストールが必須。</div>
+          <span class="tag warning">要専用アプリ</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TIPS -->
+    <div class="tips">
+      <h3>💡 注文のコツ</h3>
+      <ul>
+        <li><strong>「スマホ対応で」を最初に言う</strong>：忘れるとPCでしか動かないやつが出てくる</li>
+        <li><strong>「〇〇みたいな」で伝える</strong>：知ってるアプリやゲームの名前を出す</li>
+        <li><strong>動かなかったらエラーを丸ごと貼る</strong>：赤い文字をそのままコピペ</li>
+        <li><strong>最初はシンプルに</strong>：動いてから「機能追加して」と頼む</li>
+      </ul>
+    </div>
+
+    <footer>
+      <p>🫠 コードは書けなくても注文はできる時代</p>
+      <p style="margin-top: 0.5rem; font-size: 0.75rem;">2025年版 - すぐ古くなる予定</p>
+    </footer>
+  </div>
+</body>
+</html>
